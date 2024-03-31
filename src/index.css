@@ -43,7 +43,6 @@ a {
 
 abbr[title] {
     border-bottom: none; /* 1 */
-    text-decoration: underline; /* 2 */
     text-decoration: underline dotted; /* 2 */
 }
 
@@ -208,7 +207,7 @@ p {
     font-weight: normal;
     color: var(--main-black);
     text-align: left;
-    margin: 0px 0px 20px;
+    margin: 0 0 20px;
 }
 
 .star {
