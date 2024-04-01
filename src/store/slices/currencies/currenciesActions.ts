@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { getCurrencies } from "../../services/getCurrencies.ts"
-import { RootState } from "../store.ts"
-import { Currencies } from "../../types/currencies.types.ts"
-import { getDatesInRange } from "../../utils/getDatesInRange.ts"
+import { getCurrencies } from "../../../services/getCurrencies.ts"
+import { RootState } from "../../store.ts"
+import { Currencies } from "../../../types/currencies.types.ts"
+import { getDatesInRange } from "../../../utils/getDatesInRange.ts"
 
 interface Props {
   startDate: string
@@ -16,13 +16,10 @@ export const fetchCurrencies = createAsyncThunk(
     const dates = getDatesInRange(startDate, endDate).filter(
       (date) => !Object.prototype.hasOwnProperty.call(state.currencies, date),
     )
-    const datesPromises = []
-    console.log(state.currencies)
     try {
-      for (const date of dates) {
-        datesPromises.push(getCurrencies(date))
-      }
-      const currencies = await Promise.all(datesPromises)
+      const currencies = await Promise.all(
+        dates.map((date) => getCurrencies(date)),
+      )
       return dates.reduce(
         (acc, next, currentIndex) => {
           acc[next] = currencies[currentIndex]
