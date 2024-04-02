@@ -10,7 +10,14 @@ interface CurrenciesData {
   cny: number[]
 }
 
-export const CurrencyChart = () => {
+interface Props {
+  currenciesToShow: {
+    eur: boolean
+    usd: boolean
+    cny: boolean
+  }
+}
+export const CurrencyChart = ({ currenciesToShow }: Props) => {
   const { startDate, endDate } = useAppSelector((state) => state.date)
   const status = useAppSelector((state) => state.currencies.status)
   const currencies = useAppSelector((state) => state.currencies.data)
@@ -21,6 +28,12 @@ export const CurrencyChart = () => {
     cny: [],
   })
   const [days, setDays] = useState(getDatesInRange(startDate, endDate))
+  const series = Object.keys(currenciesToShow)
+    .filter((key) => currenciesToShow[key as keyof typeof currenciesToShow])
+    .map((currency) => ({
+      data: currenciesData[currency as keyof typeof currenciesData],
+      label: currency,
+    }))
 
   useEffect(() => {
     setDays(getDatesInRange(startDate, endDate))
@@ -46,19 +59,6 @@ export const CurrencyChart = () => {
   if (status === "loading") return <CircularProgress />
 
   return (
-    <LineChart
-      series={[
-        { data: currenciesData.eur, label: "eur" },
-        { data: currenciesData.usd, label: "usd" },
-        { data: currenciesData.cny, label: "cny" },
-      ]}
-      xAxis={[{ scaleType: "point", data: days }]}
-      yAxis={[
-        {
-          min: 7,
-          max: 110,
-        },
-      ]}
-    />
+    <LineChart series={series} xAxis={[{ scaleType: "point", data: days }]} />
   )
 }

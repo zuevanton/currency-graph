@@ -54,7 +54,7 @@ function App() {
             />
           </Grid>
           <Grid item md={8}>
-            <CurrencyChart />
+            <CurrencyChart currenciesToShow={checkboxesStatus} />
           </Grid>
         </Grid>
       </Container>
