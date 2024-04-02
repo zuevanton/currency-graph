@@ -47,6 +47,8 @@ function App() {
               onChange={(newDate) =>
                 dispatch(setStartDate(newDate!.format(DATE_FORMAT)))
               }
+              disableFuture={true}
+              maxDate={moment(endDate).subtract(1, "days")}
             />
             <DatePicker
               label="Дата по"
@@ -54,6 +56,8 @@ function App() {
               onChange={(newDate) =>
                 dispatch(setEndDate(newDate!.format(DATE_FORMAT)))
               }
+              disableFuture={true}
+              minDate={moment(startDate).add(1, "days")}
             />
           </Grid>
           <Grid item md={8}>
