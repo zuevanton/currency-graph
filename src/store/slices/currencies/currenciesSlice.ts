@@ -7,16 +7,22 @@ interface initialState {
     [key: string]: Currencies
   }
   status: "idle" | "loading" | "error"
+  apiRequestCounter: number
 }
 
-const initialState: initialState = { data: {}, status: "idle" }
+const initialState: initialState = {
+  data: {},
+  status: "idle",
+  apiRequestCounter: 0,
+}
 export const currenciesSlice = createSlice({
   name: "currencies",
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder.addCase(fetchCurrencies.fulfilled, (state, { payload }) => {
-      Object.assign(state.data, payload)
+      Object.assign(state.data, payload.data)
+      state.apiRequestCounter += payload.requestCounter
       state.status = "idle"
     })
     builder.addCase(fetchCurrencies.pending, (state) => {

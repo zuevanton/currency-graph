@@ -14,9 +14,12 @@ import { CurrencyChart } from "./components/CurrencyChart/CurrencyChart.tsx"
 
 function App() {
   const { startDate, endDate } = useAppSelector((state) => state.date)
+  const apiRequestCounter = useAppSelector(
+    (state) => state.currencies.apiRequestCounter,
+  )
   const dispatch = useAppDispatch()
   const [checkboxesStatus, setCheckboxesStatus] = useState({
-    eur: false,
+    eur: true,
     usd: false,
     cny: false,
   })
@@ -31,7 +34,7 @@ function App() {
         <Typography variant="h2" component="h2" sx={{ marginBottom: "1rem" }}>
           Тестовое задание NVI Solutions
         </Typography>
-        <Grid container>
+        <Grid container sx={{ marginBottom: "2rem" }}>
           <Grid item md={4}>
             <CheckboxesGroup
               status={checkboxesStatus}
@@ -57,6 +60,9 @@ function App() {
             <CurrencyChart currenciesToShow={checkboxesStatus} />
           </Grid>
         </Grid>
+        <Typography variant="body1" component="p">
+          Число запросов в API: {apiRequestCounter}
+        </Typography>
       </Container>
     </>
   )
