@@ -46,6 +46,7 @@ function App() {
               }
               disableFuture={true}
               maxDate={moment(endDate).subtract(1, "days")}
+              format='DD/MM/YYYY'
             />
             <DatePicker
               label="Дата по"
@@ -55,6 +56,7 @@ function App() {
               }
               disableFuture={true}
               minDate={moment(startDate).add(1, "days")}
+              format='DD/MM/YYYY'
             />
           </Grid>
           <Grid item md={8}>
