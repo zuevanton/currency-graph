@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useAppDispatch, useAppSelector } from "./hooks/reduxHooks.ts"
-import { fetchCurrencies } from "./store/slices/currencies/currenciesActions.ts"
 import moment from "moment"
 import { Container, Grid, Typography } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
@@ -11,6 +10,8 @@ import {
 } from "./store/slices/date/dateSlice.ts"
 import { CheckboxesGroup } from "./components/CheckboxesGroup/CheckboxesGroup.tsx"
 import { CurrencyChart } from "./components/CurrencyChart/CurrencyChart.tsx"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 function App() {
   const { startDate, endDate } = useAppSelector((state) => state.date)
@@ -19,14 +20,10 @@ function App() {
   )
   const dispatch = useAppDispatch()
   const [checkboxesStatus, setCheckboxesStatus] = useState({
-    eur: true,
+    eur: false,
     usd: false,
     cny: false,
   })
-
-  useEffect(() => {
-    dispatch(fetchCurrencies({ startDate, endDate }))
-  }, [startDate, endDate])
 
   return (
     <>
@@ -67,6 +64,15 @@ function App() {
         <Typography variant="body1" component="p">
           Число запросов в API: {apiRequestCounter}
         </Typography>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          closeOnClick
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </Container>
     </>
   )

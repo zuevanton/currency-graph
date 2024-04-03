@@ -1,18 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { Currencies } from "../../../types/currencies.types.ts"
+import { CurrenciesSlice } from "../../../types/currencies.types.ts"
 import { fetchCurrencies } from "./currenciesActions.ts"
+import { toast } from "react-toastify"
 
-interface initialState {
-  data: {
-    [key: string]: Currencies
-  }
-  status: "idle" | "loading" | "error"
-  apiRequestCounter: number
-}
-
-const initialState: initialState = {
+const initialState: CurrenciesSlice = {
   data: {},
-  status: "idle",
+  status: "loading",
   apiRequestCounter: 0,
 }
 export const currenciesSlice = createSlice({
@@ -27,6 +20,9 @@ export const currenciesSlice = createSlice({
     })
     builder.addCase(fetchCurrencies.pending, (state) => {
       state.status = "loading"
+    })
+    builder.addCase(fetchCurrencies.rejected, (_, action) => {
+      toast(action.payload as string, { toastId: "show-error" })
     })
   },
 })

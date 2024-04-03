@@ -1,6 +1,6 @@
 import { $api } from "../http"
 import {
-  Currencies,
+  type Currencies,
   type CurrenciesResponse,
 } from "../types/currencies.types.ts"
 

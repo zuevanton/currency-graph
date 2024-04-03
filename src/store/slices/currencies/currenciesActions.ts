@@ -1,8 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { getCurrencies } from "../../../services/getCurrencies.ts"
-import { RootState } from "../../store.ts"
-import { Currencies } from "../../../types/currencies.types.ts"
+import { type RootState } from "../../store.ts"
+import { type Currencies } from "../../../types/currencies.types.ts"
 import { getDatesInRange } from "../../../utils/getDatesInRange.ts"
+import { AxiosError } from "axios"
 
 interface Props {
   startDate: string
@@ -34,6 +35,13 @@ export const fetchCurrencies = createAsyncThunk(
       )
       return { requestCounter, data: newData }
     } catch (e) {
+      if (e instanceof AxiosError) {
+        if (e.response?.status === 404) {
+          return thunkAPI.rejectWithValue(
+            "Отсутствуют данные за выбранный период",
+          )
+        }
+      }
       return thunkAPI.rejectWithValue("Error while fetching")
     }
   },

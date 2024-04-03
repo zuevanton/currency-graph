@@ -1,14 +1,10 @@
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material"
 import { ChangeEvent } from "react"
+import { CurrenciesToShow } from "../../types/currencies.types.ts"
 
-export interface CheckboxStatus {
-  eur: boolean
-  usd: boolean
-  cny: boolean
-}
 interface Props {
-  status: CheckboxStatus
-  onChange: (newStatus: CheckboxStatus) => void
+  status: CurrenciesToShow
+  onChange: (newStatus: CurrenciesToShow) => void
 }
 export const CheckboxesGroup = ({ status, onChange }: Props) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

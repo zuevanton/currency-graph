@@ -1,4 +1,3 @@
-import React from "react"
 import ReactDOM from "react-dom/client"
 import App from "./App.tsx"
 import "./index.css"
@@ -8,14 +7,15 @@ import { store } from "./store/store"
 import { LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment"
 import "moment/locale/zh-cn.js"
+import { StrictMode } from "react"
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <BrowserRouter>
       <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="zh-cn">
-        <React.StrictMode>
+        <StrictMode>
           <App />
-        </React.StrictMode>
+        </StrictMode>
       </LocalizationProvider>
     </BrowserRouter>
   </Provider>,

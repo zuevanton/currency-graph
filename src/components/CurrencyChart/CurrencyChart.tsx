@@ -1,64 +1,69 @@
 import { LineChart } from "@mui/x-charts"
-import { useEffect, useState } from "react"
-import { useAppSelector } from "../../hooks/reduxHooks.ts"
+import { useEffect, useMemo, useState } from "react"
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks.ts"
 import { getDatesInRange } from "../../utils/getDatesInRange.ts"
-import { CircularProgress } from "@mui/material"
-
-interface CurrenciesData {
-  usd: number[]
-  eur: number[]
-  cny: number[]
-}
+import { Box, CircularProgress } from "@mui/material"
+import {
+  type CurrenciesChartData,
+  type CurrenciesToShow,
+} from "../../types/currencies.types.ts"
+import { transformDataToChart } from "../../utils/transformDataToChart.tsx"
+import { fetchCurrencies } from "../../store/slices/currencies/currenciesActions.ts"
 
 interface Props {
-  currenciesToShow: {
-    eur: boolean
-    usd: boolean
-    cny: boolean
-  }
+  currenciesToShow: CurrenciesToShow
 }
+
 export const CurrencyChart = ({ currenciesToShow }: Props) => {
+  const dispatch = useAppDispatch()
   const { startDate, endDate } = useAppSelector((state) => state.date)
-  const status = useAppSelector((state) => state.currencies.status)
-  const currencies = useAppSelector((state) => state.currencies.data)
+  const { status, data: currencies } = useAppSelector(
+    (state) => state.currencies,
+  )
 
-  const [currenciesData, setCurrenciesData] = useState<CurrenciesData>({
-    usd: [],
-    eur: [],
-    cny: [],
-  })
-  const [days, setDays] = useState(getDatesInRange(startDate, endDate))
-  const series = Object.keys(currenciesToShow)
-    .filter((key) => currenciesToShow[key as keyof typeof currenciesToShow])
-    .map((currency) => ({
-      data: currenciesData[currency as keyof typeof currenciesData],
-      label: currency,
-    }))
+  const [chartData, setChartData] = useState<CurrenciesChartData[]>([])
 
+  const days = useMemo(
+    () => getDatesInRange(startDate, endDate),
+    [startDate, endDate],
+  )
   useEffect(() => {
-    setDays(getDatesInRange(startDate, endDate))
-  }, [startDate, endDate])
+    if (
+      days.every((day) => Object.prototype.hasOwnProperty.call(currencies, day))
+    ) {
+      setChartData(transformDataToChart(currencies, currenciesToShow, days))
+    } else {
+      dispatch(fetchCurrencies({ startDate, endDate }))
+    }
+  }, [days, currenciesToShow, status])
 
-  useEffect(() => {
-    const newData = days.reduce(
-      (acc, day) => {
-        if (currencies[day] === undefined) return acc
-        for (const currency in acc) {
-          acc[currency as keyof CurrenciesData].push(
-            currencies[day][currency as keyof (typeof currencies)[typeof day]],
-          )
-        }
-        return acc
-      },
-      { usd: [], cny: [], eur: [] } as CurrenciesData,
+  if (
+    Object.keys(currenciesToShow).every(
+      (key) => !currenciesToShow[key as keyof CurrenciesToShow],
     )
+  ) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+        }}
+      >
+        Выберите валюту для отображения данных
+      </Box>
+    )
+  }
 
-    setCurrenciesData(newData)
-  }, [currencies, days])
-
-  if (status === "loading") return <CircularProgress />
+  if (status === "loading" || days.length !== chartData[0]?.data.length) {
+    return <CircularProgress />
+  }
 
   return (
-    <LineChart series={series} xAxis={[{ scaleType: "point", data: days }]} />
+    <LineChart
+      series={chartData}
+      xAxis={[{ scaleType: "point", data: days }]}
+    />
   )
 }
